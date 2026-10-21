@@ -1,8 +1,0 @@
-<% @stocks.each do |stock| %>
-  <p>
-    <a href="/chart/<%= h(stock[:symbol]) %>">
-      <%= h(stock[:name]) %> (<%= h(stock[:symbol]) %>)
-    </a>
-    <%= stock[:name] %> (<%= stock[:symbol] %>)
-  </p>
-<% end %>

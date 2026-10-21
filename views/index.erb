@@ -1,7 +1,19 @@
-<h1> Stock Chart Application </h1>
+<link rel="stylesheet" href="/css/style.css">
+<h1>Stock Chart</h1>
 
-<p> Search by company name or stock symbol to view the stock chart. </p>
-<form action="/results" method="get">
-    <input type="text" name="search_query" />
-    <input type="submit" value="Search" />
-</form>
+<div class="stock-search">
+  <input
+    type="text"
+    id="stockSearchInput"
+    placeholder="Search company or ticker..."
+  >
+</div>
+
+<h2 id="chartTitle">Select a stock</h2>
+
+<div style="width: 100%; height: 400px;">
+  <canvas id="stockChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+<script src="/js/stocks.js" defer></script>

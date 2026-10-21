@@ -1,6 +1,6 @@
 require 'sinatra'
+require 'json'
 require_relative 'stock_api'
-require 'rack/utils'
 
 helpers do
   def h(text)
@@ -9,19 +9,25 @@ helpers do
 end
 
 get '/' do
-    erb :index
+  erb :index
 end
 
-get '/results' do
-    query = params[:search_query].to_s.strip.upcase
-    @stocks = query.empty? ? [] : search_stocks(query)
+get '/api/stocks' do
+  content_type :json
 
-    erb :results
+  query = params[:query].to_s.strip.upcase
+
+  halt 400, { error: 'Search query is required' }.to_json if query.empty?
+
+  search_stocks(query).to_json
 end
 
-get '/chart/:symbol' do
-    @symbol = params[:symbol]
-    @prices = get_stock_prices(@symbol)
+get '/api/stocks/:symbol/prices' do
+  content_type :json
 
-    erb :chart
+  symbol = params[:symbol].to_s.strip.upcase
+
+  halt 400, { error: 'Invalid symbol' }.to_json unless symbol.match?(/\A[A-Z0-9.^-]+\z/)
+
+  get_stock_prices(symbol).to_json
 end
