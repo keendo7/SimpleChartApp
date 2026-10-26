@@ -2,7 +2,6 @@ require 'dotenv/load'
 require 'httparty'
 
 puts "API key present: #{ENV.key?('ALPHA_VANTAGE_API_KEY')}"
-puts "Alpha Vantage response: #{data}"
 
 def search_stocks(query)
   response = HTTParty.get(
@@ -28,6 +27,8 @@ def search_stocks(query)
       symbol: stock['1. symbol']
     }
   end
+
+  puts "Alpha Vantage response: #{data}"
 end
 
 def get_stock_prices(symbol, range = '7D')
