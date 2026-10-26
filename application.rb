@@ -19,7 +19,12 @@ get '/api/stocks' do
 
   halt 400, { error: 'Search query is required' }.to_json if query.empty?
 
-  search_stocks(query).to_json
+  begin
+    search_stocks(query).to_json
+  rescue StandardError => e
+    logger.error("Stock search failed: #{e.message}")
+    halt 502, { error: 'Unable to search stocks' }.to_json
+  end
 end
 
 get '/api/stocks/:symbol/prices' do
