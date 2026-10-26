@@ -1,18 +1,33 @@
 require 'dotenv/load'
 require 'httparty'
 
-def search_stocks(stock)
-    response = HTTParty.get(
-    "https://www.alphavantage.co/query",
-        query:{
-            function: 'SYMBOL_SEARCH',
-            keywords: stock,
-            apikey: ENV['ALPHA_VANTAGE_API_KEY']
-        }
-    )
+puts "API key present: #{ENV.key?('ALPHA_VANTAGE_API_KEY')}"
+puts "Alpha Vantage response: #{data}"
 
-    data = response.parsed_response.fetch('bestMatches', [])
-    data.map { |match| {name: match['2. name'], symbol: match['1. symbol']} }
+def search_stocks(query)
+  response = HTTParty.get(
+    'https://www.alphavantage.co/query',
+    query: {
+      function: 'SYMBOL_SEARCH',
+      keywords: query,
+      apikey: ENV['ALPHA_VANTAGE_API_KEY']
+    }
+  )
+
+  data = response.parsed_response
+
+  if data['Information'] || data['Note'] || data['Error Message']
+    raise "Alpha Vantage error: #{data['Information'] || data['Note'] || data['Error Message']}"
+  end
+
+  matches = data.fetch('bestMatches', [])
+
+  matches.map do |stock|
+    {
+      name: stock['2. name'],
+      symbol: stock['1. symbol']
+    }
+  end
 end
 
 def get_stock_prices(symbol, range = '7D')
