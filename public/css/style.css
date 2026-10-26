@@ -1,0 +1,81 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
+  margin: 0;
+  padding: 40px 20px;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  margin-top: 20px;
+}
+
+@media (max-width: 600px) {
+  .chart-container {
+    height: 280px;
+  }
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+#stockSearchInput {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 15px;
+  font-size: 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  outline: none;
+}
+
+#stockSearchInput:focus {
+  border-color: #2563eb;
+}
+
+#chartTitle {
+  margin-top: 35px;
+  font-size: 20px;
+}
+
+#chartRanges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#chartRanges[hidden] {
+  display: none;
+}
+
+#chartRanges button {
+  flex: 1;
+  min-width: 45px;
+  padding: 8px 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: white;
+  color: #334155;
+  cursor: pointer;
+}
+
+#chartRanges button.active {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+#chartRanges button:hover {
+  background: #e2e8f0;
+}

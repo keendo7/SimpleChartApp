@@ -57,9 +57,17 @@ input.addEventListener('keydown', event => {
   }
 });
 
+document.querySelector('[data-range="7D"]').classList.add('active');
+
 document.querySelectorAll('[data-range]').forEach(button => {
   button.addEventListener('click', () => {
     if (!currentSymbol) return;
+
+    document.querySelectorAll('[data-range]').forEach(btn => {
+      btn.classList.remove('active');
+    });
+
+    button.classList.add('active');
 
     currentRange = button.dataset.range;
     loadStock(currentSymbol);
@@ -109,6 +117,7 @@ function filterPrices(prices, range) {
 }
 
 function renderChart(symbol, prices) {
+  chartTitle.hidden = false;
   chartTitle.textContent = `${symbol} Closing Prices`;
 
   if (chart) chart.destroy();
@@ -127,7 +136,15 @@ function renderChart(symbol, prices) {
     },
     options: {
       responsive: true,
-      maintainAspectRatio: false
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          ticks: {
+            autoSkip: true,
+            maxTicksLimit: 6
+          }
+        }
+      }
     }
   });
 
