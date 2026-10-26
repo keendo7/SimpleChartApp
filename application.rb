@@ -25,9 +25,16 @@ end
 get '/api/stocks/:symbol/prices' do
   content_type :json
 
-  symbol = params[:symbol].to_s.strip.upcase
+  symbol = params[:symbol].to_s.upcase
+  range = params.fetch('range', '1M').upcase
 
   halt 400, { error: 'Invalid symbol' }.to_json unless symbol.match?(/\A[A-Z0-9.^-]+\z/)
+  halt 400, { error: 'Invalid range' }.to_json unless %w[7D 1M 3M 6M 1Y].include?(range)
 
-  get_stock_prices(symbol).to_json
+  begin
+    get_stock_prices(symbol, range).to_json
+  rescue StandardError => e
+    logger.error(e.message)
+    halt 502, { error: 'Unable to fetch stock prices' }.to_json
+  end
 end

@@ -1,10 +1,19 @@
 const input = document.getElementById('stockSearchInput');
 const chartTitle = document.getElementById('chartTitle');
 const canvas = document.getElementById('stockChart');
+const chartRanges = document.getElementById('chartRanges');
+const months = {
+  '1M': 1,
+  '3M': 3,
+  '6M': 6,
+  '1Y': 12
+};
 
 let chart;
 let selectedStock;
 let timer;
+let currentSymbol;
+let currentRange = '7D';
 
 input.addEventListener('input', () => {
   clearTimeout(timer);
@@ -48,29 +57,55 @@ input.addEventListener('keydown', event => {
   }
 });
 
+document.querySelectorAll('[data-range]').forEach(button => {
+  button.addEventListener('click', () => {
+    if (!currentSymbol) return;
+
+    currentRange = button.dataset.range;
+    loadStock(currentSymbol);
+  });
+});
+
 async function loadStock(symbol) {
+  currentSymbol = symbol;
   chartTitle.textContent = `Loading ${symbol}...`;
 
   try {
     const response = await fetch(
-      `/api/stocks/${encodeURIComponent(symbol)}/prices`
+      `/api/stocks/${encodeURIComponent(symbol)}/prices?range=${currentRange}`
     );
 
     if (!response.ok) throw new Error('Failed to load prices');
 
     const prices = await response.json();
+    const filteredPrices = filterPrices(prices, currentRange);
 
-    if (!prices.length) {
+    if (!filteredPrices.length) {
       chartTitle.textContent = 'No price data available.';
       return;
     }
 
-    renderChart(symbol, prices);
+    renderChart(symbol, filteredPrices);
 
   } catch (error) {
     chartTitle.textContent = 'Unable to load stock prices.';
     console.error(error);
   }
+}
+
+function filterPrices(prices, range) {
+  if (!prices.length) return [];
+
+  const endDate = new Date(prices[prices.length - 1].time);
+  const startDate = new Date(endDate);
+
+  if (range === '7D') {
+    startDate.setUTCDate(startDate.getUTCDate() - 7);
+  } else {
+    startDate.setUTCMonth(startDate.getUTCMonth() - months[range]);
+  }
+
+  return prices.filter(price => new Date(price.time) >= startDate);
 }
 
 function renderChart(symbol, prices) {
@@ -95,4 +130,6 @@ function renderChart(symbol, prices) {
       maintainAspectRatio: false
     }
   });
+
+  chartRanges.hidden = false;
 }
